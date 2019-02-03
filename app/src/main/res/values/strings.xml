@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">AirvedaAssignment</string>
+    <string name="profileText" translatable="false">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</string>
+    <string name="like">LIKE</string>
+    <string name="unLike">UNLIKE</string>
+    <string name="SamratGarai">From Samrat Garai</string>
+    <string name="description">Description</string>
+    <string name="From">From :</string>
+</resources>
