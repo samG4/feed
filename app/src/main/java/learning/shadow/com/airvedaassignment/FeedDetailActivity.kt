@@ -1,5 +1,7 @@
 package learning.shadow.com.airvedaassignment
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
@@ -14,34 +16,21 @@ import learning.shadow.com.airvedaassignment.util.gone
 import learning.shadow.com.airvedaassignment.util.show
 import learning.shadow.com.airvedaassignment.util.showSnack
 
-
 class FeedDetailActivity : AppCompatActivity(), View.OnClickListener, ConnectivityReceiver.ConnectivityReceiverListener {
-    override fun onNetworkConnectionChanged(isConnected: Boolean) {
-        showSnack(isConnected,detail)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        MainApplication.getInstance().setConnectivityListener(this)
-    }
-
-    override fun onClick(v: View?) {
-        when(v){
-            includedFeed.btnUnlike->{
-                btnLike.show()
-                btnUnlike.gone()
-            }
-            includedFeed.btnLike->{
-                btnLike.gone()
-                btnUnlike.show()
-            }
-        }
-    }
-
     private val feed : Feed by lazy{
-        intent.extras.get("FEED") as Feed
+        intent.extras.get(MainActivity.FEED_DATA) as Feed
     }
+    private val id : Int by lazy{
+        intent.extras.getInt(MainActivity.FEED_ID, -1)
+    }
+
+    private var isChanged = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        if(savedInstanceState!=null){
+            feed.isLiked = savedInstanceState.getBoolean("LIKED_STATUS")
+            isChanged = savedInstanceState.getBoolean("CHANGED_STATUS")
+        }
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_feed_detail)
         includedFeed.btnUnlike.setOnClickListener(this)
@@ -84,4 +73,45 @@ class FeedDetailActivity : AppCompatActivity(), View.OnClickListener, Connectivi
         }
     }
 
+    override fun onNetworkConnectionChanged(isConnected: Boolean) {
+        showSnack(isConnected,detail)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        MainApplication.getInstance().setConnectivityListener(this)
+    }
+
+    override fun onSaveInstanceState(savedInstanceState: Bundle) {
+        super.onSaveInstanceState(savedInstanceState)
+        savedInstanceState.putBoolean("LIKED_STATUS", feed.isLiked)
+        savedInstanceState.putBoolean("CHANGED_STATUS", isChanged)
+    }
+
+    override fun onClick(v: View?) {
+        when(v){
+            includedFeed.btnUnlike->{
+                btnLike.show()
+                btnUnlike.gone()
+                feed.isLiked = false
+            }
+            includedFeed.btnLike->{
+                btnLike.gone()
+                btnUnlike.show()
+                feed.isLiked = true
+            }
+        }
+        isChanged=!isChanged
+    }
+
+    override fun onBackPressed() {
+        if(isChanged){
+            val returnIntent = Intent()
+            returnIntent.putExtra(MainActivity.FEED_DATA, feed)
+            returnIntent.putExtra(MainActivity.FEED_ID,id)
+            setResult(Activity.RESULT_OK, returnIntent)
+        }
+        super.onBackPressed()
+        finish()
+    }
 }

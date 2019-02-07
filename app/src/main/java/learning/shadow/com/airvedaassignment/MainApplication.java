@@ -19,6 +19,6 @@ public class MainApplication extends Application {
     }
 
     public void setConnectivityListener(ConnectivityReceiver.ConnectivityReceiverListener listener) {
-        ConnectivityReceiver.connectivityReceiverListener = listener;
+        ConnectivityReceiver.Companion.setConnectivityReceiverListener(listener);
     }
 }

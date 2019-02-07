@@ -1,38 +1,46 @@
 package learning.shadow.com.airvedaassignment.model
 
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.PrimaryKey
 import android.os.Parcel
 import android.os.Parcelable
 
+@Entity(tableName = "feed_table")
 data class Feed(
+    @PrimaryKey(autoGenerate = true)
+    var id: Int,
     var description: String,
-    var imageUrl: String?="",
+    var imageUrl: String? = "",
     var name: String,
-    var text: String?="",
+    var text: String? = "",
     var time: Long,
     var title: String,
     var showTime: Boolean = true,
     var isLiked: Boolean = false
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
+        parcel.readInt(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
         parcel.readLong(),
         parcel.readString(),
-        parcel.readValue(Boolean::class.java.classLoader) as Boolean,
-        parcel.readValue(Boolean::class.java.classLoader) as Boolean
-    )
+        parcel.readByte() != 0.toByte(),
+        parcel.readByte() != 0.toByte()
+    ) {
+    }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeInt(id)
         parcel.writeString(description)
         parcel.writeString(imageUrl)
         parcel.writeString(name)
         parcel.writeString(text)
         parcel.writeLong(time)
         parcel.writeString(title)
-        parcel.writeValue(showTime)
-        parcel.writeValue(isLiked)
+        parcel.writeByte(if (showTime) 1 else 0)
+        parcel.writeByte(if (isLiked) 1 else 0)
     }
 
     override fun describeContents(): Int {

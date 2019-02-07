@@ -8,13 +8,17 @@ import learning.shadow.com.airvedaassignment.model.Feed
 import learning.shadow.com.airvedaassignment.widget.FeedItemView
 
 class FeedAdapter(
-    var context: Context, var itemHandler: FeedItemView.FeedItemHandler,
-    var feedItems: ArrayList<Feed>
+    var context: Context, var itemHandler: FeedItemView.FeedItemHandler
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private lateinit var feedItems: ArrayList<Feed>
+
     init {
         setHasStableIds(true)
     }
 
+    fun setFeedItems(feedItems: ArrayList<Feed>){
+        this.feedItems = groupFeedList(feedItems)
+    }
 
     override fun getItemId(position: Int): Long {
         return position.toLong()
@@ -49,7 +53,36 @@ class FeedAdapter(
             feedView.initialize(feed,itemHandler)
         }
 
-        val feedView: FeedItemView = itemView as FeedItemView
+        private val feedView: FeedItemView = itemView as FeedItemView
+    }
+
+    private fun groupFeedList(feedList: MutableList<Feed>): ArrayList<Feed> {
+        val map = HashMap<Long, ArrayList<Feed>>()
+        feedList.forEach {
+            if (!map.containsKey(it.time)) {
+                val list = ArrayList<Feed>()
+                list.add(it)
+                map[it.time] = list
+            } else {
+                map[it.time]?.add(it)
+            }
+        }
+
+        map.forEach {
+            if (it.value.size > 1) {
+                it.value[0].showTime = true
+                for (i in 1 until it.value.size) {
+                    it.value[i].showTime = false
+                }
+            } else {
+                it.value[0].showTime = true
+            }
+        }
+        val finalList = ArrayList<Feed>()
+        map.toSortedMap(compareByDescending { it }).values.forEach {
+            finalList.addAll(it)
+        }
+        return finalList
     }
 
 }
