@@ -7,6 +7,8 @@ import android.net.ConnectivityManager
 import android.support.design.widget.Snackbar
 import android.view.View
 import android.widget.TextView
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 fun View.gone() {
@@ -32,17 +34,21 @@ fun showSnack(isConnected: Boolean, view: View) {
         color = Color.RED
     }
 
-    val snackbar = Snackbar
-        .make(view, message, Snackbar.LENGTH_LONG)
-
-    val sbView = snackbar.view
-    val textView = sbView.findViewById(android.support.design.R.id.snackbar_text) as TextView
+    val snackBar = Snackbar
+        .make(view, message, Snackbar.LENGTH_LONG).view
+    val textView = snackBar.findViewById(android.support.design.R.id.snackbar_text) as TextView
     textView.setTextColor(color)
-    snackbar.show()
+    snackBar.show()
 }
 
 fun Activity.isNetworkAvailable(): Boolean {
     val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     val activeNetworkInfo = connectivityManager.activeNetworkInfo
     return activeNetworkInfo != null && activeNetworkInfo.isConnected
+}
+
+fun convertLongToTime(time: Long): String {
+    val date = Date(time)
+    val format = SimpleDateFormat("YYYY.MM.dd HH:mm")
+    return format.format(date)
 }
