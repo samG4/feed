@@ -35,8 +35,10 @@ fun showSnack(isConnected: Boolean, view: View) {
     }
 
     val snackBar = Snackbar
-        .make(view, message, Snackbar.LENGTH_LONG).view
-    val textView = snackBar.findViewById(android.support.design.R.id.snackbar_text) as TextView
+        .make(view, message, Snackbar.LENGTH_LONG)
+
+    val sbView = snackBar.view
+    val textView = sbView.findViewById(android.support.design.R.id.snackbar_text) as TextView
     textView.setTextColor(color)
     snackBar.show()
 }
